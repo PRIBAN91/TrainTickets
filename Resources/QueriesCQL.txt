@@ -1,0 +1,79 @@
+
+CREATE KEYSPACE IF NOT EXISTS FiniteLoops WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1};
+
+
+USE FiniteLoops;
+
+
+create type lat_lon(lat double, lon double);
+
+
+create table station_details (
+			station_code varchar primary key,
+			 lat double,
+			 lon double,
+			 station_name varchar,
+			 connecting_stations map<varchar,int>,
+			 number_of_tracks int,
+			 station_radius double,
+			 track1 list<frozen<lat_lon>>,
+			 track2 list<frozen<lat_lon>>,
+			 track3 list<frozen<lat_lon>>,
+			 track4 list<frozen<lat_lon>>,
+			 track5 list<frozen<lat_lon>>,
+			 track6 list<frozen<lat_lon>>,
+			 track7 list<frozen<lat_lon>>,
+			 track8 list<frozen<lat_lon>>,
+			 track9 list<frozen<lat_lon>>,
+			 track10 list<frozen<lat_lon>>,
+			 track11 list<frozen<lat_lon>>,
+			 track12 list<frozen<lat_lon>>,
+			 track13 list<frozen<lat_lon>>,
+			 track14 list<frozen<lat_lon>>,
+			 track15 list<frozen<lat_lon>>,
+			 track16 list<frozen<lat_lon>>
+			 ) ;
+			 
+
+create table station_details (
+			station_code varchar PRIMARY KEY,
+			 lat double,
+			 lon double,
+			 station_name varchar,
+			 connecting_stations map<int,varchar>,
+			 station_radius double,
+			 all_track_details map<int, frozen<tuple<frozen<list<double>>, frozen<list<double>>>>>
+			 ) ;
+			 
+			 
+create table fare_charts (
+			station_from_name varchar,
+			station_from_code varchar,
+			station_from_lat_lon frozen<lat_lon>,
+			station_to_name varchar,
+			station_to_code varchar,
+			station_to_lat_lon frozen<lat_lon>,
+			station_via_names list<varchar>,
+			station_via_codes list<varchar>,
+			station_via_lat_lon list<frozen<lat_lon>>,
+			fare list<double>,
+			PRIMARY KEY((station_from_code), station_to_code)
+			);
+			
+			
+cql = "INSERT INTO station_details (station_code, lat, lon, station_name, connecting_stations," \
+       " station_radius, all_track_details) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+session.execute(cql, (
+     geohash, 19.128634, 72.928142, 'Kanjurmarg', {1: 'te7uex29zdbk9knh', 2: 'te7ugsz8ks84f7pz'}, 0.2, {1: ([19.126593, 19.126249, 19.125924], [72.927815, 72.927836, 72.927836]), 2: ([19.131175, 19.132006, 19.132959], [72.929360, 72.929832, 72.930368])})
+	 
+     [Address(19.126593, 72.927815), Address(19.126249, 72.927836), Address(19.125924, 72.927836)],
+     [Address(19.131175, 72.929360), Address(19.132006, 72.929832), Address(19.132959, 72.930368)]))
+
+			
+insert into fare_charts (station_from_name, station_from_code, station_from_lat_lon, station_to_name, station_to_code, station_to_lat_lon, fare) values (%s, %s, %s, %s, %s, %s, %s)
+
+('Kanjurmarg', geohash, Address(19.128634, 72.928142), 'Bhandup', 'te7ugsz8ks84f7pz', Address(19.142371, 72.937739), [10])
+			
+			
+
